@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ASTRA NUMBERS — Petualangan Angka</title>
+<style>
+:root{
+ --bg:#081426;--panel:#10243b;--panel2:#142d48;--text:#f5fbff;--muted:#a9bfd3;
+ --cyan:#53e0ff;--yellow:#ffd45a;--green:#58e6a8;--pink:#ff77a8;--danger:#ff6874;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#17436a 0,#081426 42%,#050b15 100%);
+font-family:Inter,Arial,sans-serif;color:var(--text);min-height:100vh;padding:18px}
+.app{max-width:980px;margin:auto}
+header{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 2px 18px}
+.brand{display:flex;align-items:center;gap:10px}.logo{font-size:38px}
+.brand h1{font-size:22px;margin:0;letter-spacing:2px}.brand small{color:var(--muted)}
+.pill{border:1px solid #2d5473;background:#0e2034;border-radius:999px;padding:9px 13px;font-weight:800}
+.hero{background:linear-gradient(135deg,#122e4d,#0d1d33);border:1px solid #244b6c;border-radius:28px;padding:28px;text-align:center;box-shadow:0 18px 60px #0006}
+.hero h2{font-size:clamp(30px,7vw,54px);margin:5px 0 8px}
+.hero p{color:var(--muted);max-width:700px;margin:0 auto 22px;line-height:1.55}
+.start{background:linear-gradient(135deg,var(--cyan),#55a8ff);color:#03111d;border:0;border-radius:16px;padding:15px 24px;font-weight:900;font-size:17px;cursor:pointer}
+.start:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.hud{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.stat{background:#0d2035;border:1px solid #244863;border-radius:16px;padding:11px;text-align:center}
+.stat b{display:block;font-size:22px}.stat span{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.progress{height:9px;background:#20364c;border-radius:99px;overflow:hidden;margin-bottom:15px}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--green),var(--yellow));transition:.35s}
+.card{background:rgba(15,34,55,.97);border:1px solid #244863;border-radius:24px;padding:22px}
+.hidden{display:none!important}
+.zone{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 11px;background:#173a52;color:var(--cyan);font-weight:900;font-size:12px;letter-spacing:.6px}
+.question{font-size:clamp(21px,4vw,30px);font-weight:900;line-height:1.35;margin:16px 0 18px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.choice{min-height:54px;border:1px solid #315673;background:#132b44;color:var(--text);border-radius:15px;padding:12px;font-size:16px;font-weight:800;cursor:pointer}
+.choice:hover{border-color:var(--cyan);background:#173653}
+.choice.correct{background:#123d31;border-color:var(--green);color:#c9ffe8}.choice.wrong{background:#432331;border-color:var(--danger)}
+.choice:disabled{cursor:default}
+.feedback{min-height:27px;margin-top:15px;font-weight:900}.explain{color:var(--muted);line-height:1.55;font-size:14px}
+.tools{display:flex;gap:9px;flex-wrap:wrap;margin-top:15px}.tool{background:#1b344e;color:#fff;border:1px solid #315673;border-radius:12px;padding:10px 12px;font-weight:800;cursor:pointer}.tool:disabled{opacity:.4;cursor:not-allowed}
+.lanes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}.lane{padding:16px;border-radius:18px;background:#10263d;border:1px solid #294d67;text-align:left}.lane b{display:block;font-size:17px;margin-bottom:5px}.lane span{font-size:13px;color:var(--muted)}
+.result{text-align:center}.result .big{font-size:60px}.result h2{font-size:32px;margin:4px 0}.result p{color:var(--muted)}.medal{display:inline-block;background:#24374b;border-radius:999px;padding:10px 15px;font-weight:900}
+.mini{font-size:12px;color:var(--muted);margin-top:10px}
+@media(max-width:650px){body{padding:10px}.hero,.card{padding:18px}.hud{grid-template-columns:1fr 1fr}.choices,.lanes{grid-template-columns:1fr}.brand h1{font-size:17px}.pill{font-size:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="brand"><div class="logo">🪐</div><div><h1>ASTRA NUMBERS</h1><small>Petualangan Matematika</small></div></div>
+ <div class="pill" id="levelPill">LEVEL 1</div>
+</header>
+
+<section id="home" class="hero">
+ <div style="font-size:48px">🚀✨🔢</div>
+ <h2>Petualangan Angka</h2>
+ <p>Selamatkan Laboratorium Astra dengan menaklukkan <b>Notasi Ilmiah</b>, <b>Angka Penting</b>, dan <b>Pembulatan</b>. Kumpulkan poin, pertahankan combo, dan raih gelar Master Angka!</p>
+ <button class="start" id="play">🚀 MULAI PETUALANGAN</button>
+ <div class="lanes">
+   <div class="lane"><b>🔬 Zona Kosmos</b><span>Notasi ilmiah</span></div>
+   <div class="lane"><b>🧪 Zona Presisi</b><span>Angka penting</span></div>
+   <div class="lane"><b>🎯 Zona Akurasi</b><span>Pembulatan</span></div>
+ </div>
+</section>
+
+<section id="playArea" class="hidden">
+ <div class="hud">
+  <div class="stat"><b id="score">0</b><span>Skor</span></div>
+  <div class="stat"><b id="hearts">❤️❤️❤️</b><span>Energi</span></div>
+  <div class="stat"><b id="combo">0×</b><span>Combo</span></div>
+  <div class="stat"><b id="count">0/12</b><span>Misi</span></div>
+ </div>
+ <div class="progress"><i id="bar"></i></div>
+ <div class="card">
+   <div class="zone" id="zone">🔬 ZONA KOSMOS</div>
+   <div class="question" id="question"></div>
+   <div class="choices" id="choices"></div>
+   <div class="feedback" id="feedback" aria-live="polite"></div>
+   <div class="explain" id="explain"></div>
+   <div class="tools">
+    <button class="tool" id="hint">💡 Petunjuk</button>
+    <button class="tool" id="skip">⏭️ Lewati (-30)</button>
+   </div>
+ </div>
+</section>
+
+<section id="result" class="card result hidden">
+ <div class="big" id="resultIcon">🏆</div>
+ <h2 id="resultTitle">Misi Selesai!</h2>
+ <p id="resultText"></p>
+ <div class="medal" id="medal"></div>
+ <div class="achievement" id="achievement" style="margin:18px 0;padding:14px;background:#10263d;border-radius:15px"></div>
+ <button class="start" id="again">🔄 MAIN LAGI</button>
+</section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+let score=0,energy=3,combo=0,n=0,locked=false,current=null,qs=[],hintUsed=false;
+const TOTAL=12;
+function shuffle(a){return a.sort(()=>Math.random()-.5)}
+function make(){
+ const q=[];
+ const add=(zone,text,choices,answer,explain,hint)=>q.push({zone,text,choices,answer,explain,hint});
+ add('🔬 ZONA KOSMOS','3.500.000 dalam notasi ilmiah adalah …',['3,5 × 10⁵','3,5 × 10⁶','35 × 10⁵','0,35 × 10⁷'],'3,5 × 10⁶','Koma digeser 6 tempat ke kiri, jadi pangkatnya +6.','Cari posisi koma setelah angka pertama.');
+ add('🔬 ZONA KOSMOS','0,00072 dalam notasi ilmiah adalah …',['7,2 × 10⁻⁴','7,2 × 10⁻³','72 × 10⁻⁵','0,72 × 10⁻⁴'],'7,2 × 10⁻⁴','Koma digeser 4 tempat ke kanan untuk memperoleh 7,2; pangkatnya −4.','Bilangan ini sangat kecil, jadi pangkatnya negatif.');
+ add('🔬 ZONA KOSMOS','Bentuk biasa dari 6,4 × 10⁻³ adalah …',['0,064','0,0064','0,00064','6400'],'0,0064','Pangkat −3 berarti koma digeser 3 tempat ke kiri.','Geser koma ke kiri sebanyak 3 tempat.');
+ add('🔬 ZONA KOSMOS','Bentuk biasa dari 8,1 × 10⁵ adalah …',['81.000','810.000','8.100.000','8100'],'810.000','Pangkat 5 berarti koma digeser 5 tempat ke kanan.','Pangkat positif berarti geser ke kanan.');
+ add('🧪 ZONA PRESISI','Banyak angka penting pada 0,00450 adalah …',['2','3','4','5'],'3','Nol di depan tidak dihitung; 4, 5, dan nol terakhir dihitung.','Abaikan nol yang hanya berada di depan angka bukan nol.');
+ add('🧪 ZONA PRESISI','Banyak angka penting pada 7,080 adalah …',['3','4','5','2'],'4','Nol di antara angka bukan nol dan nol di belakang koma termasuk angka penting.','Nol di tengah angka dan nol desimal terakhir diperhitungkan.');
+ add('🧪 ZONA PRESISI','Bilangan 1,205 memiliki … angka penting.',['3','4','5','2'],'4','Semua angka bukan nol penting dan nol di antara angka bukan nol juga penting.','Perhatikan nol yang berada di antara 1 dan 2.');
+ add('🧪 ZONA PRESISI','Bilangan 0,03040 memiliki … angka penting.',['3','4','5','2'],'4','Nol awal tidak penting; 3, 0, 4, dan 0 terakhir adalah angka penting.','Mulai menghitung dari angka bukan nol pertama.');
+ add('🎯 ZONA AKURASI','7,846 dibulatkan menjadi 2 angka di belakang koma adalah …',['7,84','7,85','7,86','7,80'],'7,85','Angka berikutnya adalah 6, sehingga 4 naik menjadi 5.','Lihat angka ketiga setelah koma.');
+ add('🎯 ZONA AKURASI','12,43 dibulatkan menjadi 1 angka di belakang koma adalah …',['12,3','12,4','12,5','13'],'12,4','Angka berikutnya adalah 3, jadi angka 4 tetap.','Jika angka berikutnya kurang dari 5, angka sebelumnya tetap.');
+ add('🎯 ZONA AKURASI','15,55 dibulatkan menjadi 1 angka di belakang koma adalah …',['15,4','15,5','15,6','16'],'15,6','Angka berikutnya adalah 5, sehingga angka 5 dibulatkan naik.','Angka 5 atau lebih membuat angka sebelumnya naik.');
+ add('🎯 ZONA AKURASI','0,00996 dibulatkan menjadi 2 angka penting adalah …',['0,0099','0,010','0,009','0,01'],'0,010','Angka pentingnya 9 dan 9; angka berikutnya 6 membuat pembulatan naik.','Tentukan dulu dua angka penting pertama.');
+ return shuffle(q);
+}
+function update(){
+ $('score').textContent=score;
+ $('hearts').textContent='❤️'.repeat(energy)+'🖤'.repeat(3-energy);
+ $('combo').textContent=combo+'×'; $('count').textContent=n+'/'+TOTAL;
+ $('bar').style.width=(n/TOTAL*100)+'%';
+ $('levelPill').textContent=n<4?'LEVEL 1':n<8?'LEVEL 2':'LEVEL 3';
+}
+function start(){
+ score=0;energy=3;combo=0;n=0;qs=make();$('home').classList.add('hidden');$('result').classList.add('hidden');$('playArea').classList.remove('hidden');show();
+}
+function show(){
+ if(n>=TOTAL||energy<=0){finish();return}
+ locked=false;hintUsed=false;current=qs[n];
+ $('zone').textContent=current.zone;$('question').textContent=current.text;$('feedback').textContent='';$('explain').textContent='';
+ $('hint').disabled=false;
+ const box=$('choices');box.innerHTML='';
+ shuffle([...current.choices]).forEach(c=>{let b=document.createElement('button');b.className='choice';b.textContent=c;b.onclick=()=>answer(b,c);box.appendChild(b)});
+ update();
+}
+function answer(btn,c){
+ if(locked)return;locked=true;
+ [...$('choices').children].forEach(b=>{b.disabled=true;if(b.textContent===current.answer)b.classList.add('correct')});
+ if(c===current.answer){
+   combo++;let pts=100+(combo-1)*25+(hintUsed?-30:0);score+=pts;
+   btn.classList.add('correct');$('feedback').textContent='✨ BENAR! +'+pts+' poin';
+ }else{
+   energy--;combo=0;btn.classList.add('wrong');$('feedback').textContent='💥 Jawaban belum tepat.';
+ }
+ $('explain').textContent=current.explain;n++;update();setTimeout(show,1350);
+}
+$('hint').onclick=()=>{if(locked||hintUsed)return;hintUsed=true;$('feedback').textContent='💡 Petunjuk: '+current.hint;$('hint').disabled=true};
+$('skip').onclick=()=>{if(locked)return;score=Math.max(0,score-30);combo=0;n++;$('feedback').textContent='⏭️ Soal dilewati.';update();setTimeout(show,650)};
+function finish(){
+ $('playArea').classList.add('hidden');$('result').classList.remove('hidden');
+ let title=score>=1100?'GRAND MASTER ANGKA':score>=800?'MASTER PRESISI':score>=500?'PENJELAJAH ANGKA':'CALON MASTER ANGKA';
+ $('resultIcon').textContent=energy>0?'🏆':'🚨';$('resultTitle').textContent=energy>0?'MISI BERHASIL!':'ENERGI HABIS!';
+ $('resultText').textContent='Kamu menyelesaikan '+n+' misi dengan skor '+score+'.';
+ $('medal').textContent='🏅 '+title;
+ $('achievement').textContent=combo>=5?'🔥 Pencapaian: COMBO MASTER — '+combo+' jawaban benar beruntun!':score>=800?'🌟 Pencapaian: Penakluk Laboratorium Angka!':'💪 Terus berlatih untuk meningkatkan skor!';
+ update();
+}
+$('play').onclick=start;$('again').onclick=start;update();
+</script>
+</body>
+</html>
